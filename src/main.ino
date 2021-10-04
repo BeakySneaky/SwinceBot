@@ -70,17 +70,17 @@ void Forward(int distance){
 //If the angle is negative the robot will turn to the left.
 void Turn(int angle){
   int distanceMotor;
-   int id = angle < 0 ? 1 : 0;
+  int id = angle < 0 ? 1 : 0;
   int angleConstant = 44.4;
-  bool distanceMax = false;
+  bool maxDistance = false;
  
   
-  while(!distanceMax){
+  while(!maxDistance){
     distanceMotor =  ENCODER_Read(id);
       
       if(distanceMotor > angle * angleConstant){
         MOTOR_SetSpeed(id,0);
-        distanceMax = true;
+        maxDistance = true;
         delay(200);
       }
       else {
@@ -89,6 +89,42 @@ void Turn(int angle){
   }
   ENCODER_Reset(0);
   ENCODER_Reset(1);
+}
+
+void Full180(){
+
+  int angleConstant = 44.4;
+  int speed = 0.4;
+  int cycle = 0;
+  int pulseCounter = 0;
+  int distanceMotor0;
+  int distanceMotor1;
+  double pCorrection;
+  bool maxDistance = false;
+
+  while(!maxDistance)
+  {
+    cycle++;  
+    distanceMotor0 = ENCODER_Read(0);
+    distanceMotor1 = ENCODER_Read(1);
+    pulseCounter += distanceMotor0;
+    
+    if(distanceMotor0 > 180 * angleConstant){
+      MOTOR_SetSpeed(0,0);
+      MOTOR_SetSpeed(1,0);
+      maxDistance = true;
+      delay(200);
+    }
+    else {
+      pCorrection = Ponderation(distanceMotor0, distanceMotor1, pulseCounter, cycle, speed);
+      MOTOR_SetSpeed(0,speed);
+      MOTOR_SetSpeed(1,pCorrection);
+    }
+
+    ENCODER_Reset(0);
+    ENCODER_Reset(1);
+  }
+
 }
 
 //Pondarion part of the PID.
@@ -115,7 +151,6 @@ void setup(){
   BoardInit();
 }
 
-
 /* ****************************************************************************
 Fonctions de boucle infini (loop())
 **************************************************************************** */
@@ -135,6 +170,25 @@ void loop() {
     Forward(movementArray1[0][i]);
     Turn(movementArray1[1][i]);
   }
+
+
+  
+  //Could even do reverse like this :
+
+  //180 turn:
+  Full180();
+  //first we reverse the turning angles. 
+  for (size_t j = 0; j < arraySize; j++)
+  {
+    movementArray1[1][j] = movementArray1[1][j]*-1;
+  }
+  //Then we make it go from the last distance to the first.
+  for (size_t i = arraySize; i > 0; i--)
+  {
+    Forward(movementArray1[0][i]);
+    Turn(movementArray1[1][i]);
+  }
+  
   
   //Hardcoded way
   /*Forward(215);
