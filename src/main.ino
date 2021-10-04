@@ -24,39 +24,55 @@ Variables globales et defines
 /* ****************************************************************************
 Vos propres fonctions sont creees ici
 **************************************************************************** */
+
+//Makes the robot move forward.
 void Forward(int distance){
-  int distanceMotor0;
-  int distanceMotor1;
+
   int distanceConstant = 133.673443;
+  int cycle = 0;
+  int pulseCounter = 0;
+   int distanceMotor0;
+  int distanceMotor1;
+  double pCorrection;
   bool maxDistance = false;
   
-  while(!maxDistance){    
+  while(!maxDistance){ 
+
+    cycle++;  
     distanceMotor0 = ENCODER_Read(0);
     distanceMotor1 = ENCODER_Read(1);
+    pulseCounter += distanceMotor0;
     
-    if(distanceMotor0 >= distance * distanceConstant){
+    if(pulseCounter >= distance * distanceConstant){
       MOTOR_SetSpeed(0,0);
       MOTOR_SetSpeed(1,0);
       maxDistance = true;
-      delay(200);
     }
-    else if(distanceMotor1 > distanceMotor0){
+    //Magic correction condition (shouldnt work)
+    /*else if(distanceMotor1 > distanceMotor0){
       MOTOR_SetSpeed(1, 0.30);
-    }
+    }*/
     else {
+      pCorrection = Ponderation(distanceMotor0, distanceMotor1, pulseCounter, cycle, 0.4);
       MOTOR_SetSpeed(0,0.4);
-      MOTOR_SetSpeed(1,0.4);
+      MOTOR_SetSpeed(1,pCorrection);
     }
+      //Read pulsation graph with serial plotter.
+      Serial.println(distanceMotor0);
+      Serial.println(distanceMotor1);
+      ENCODER_Reset(0);
+      ENCODER_Reset(1);
   }
-  ENCODER_Reset(0);
-  ENCODER_Reset(1);
 }
 
-// id 0 = right, id 1 = left.
-void Turn(int id, int angle){
+//Makes the robot turn in fonction of the angle.
+//If the angle is negative the robot will turn to the left.
+void Turn(int angle){
   int distanceMotor;
+   int id = angle < 0 ? 1 : 0;
   int angleConstant = 44.4;
   bool distanceMax = false;
+ 
   
   while(!distanceMax){
     distanceMotor =  ENCODER_Read(id);
@@ -72,8 +88,21 @@ void Turn(int id, int angle){
   }
   ENCODER_Reset(0);
   ENCODER_Reset(1);
-
 }
+
+//Pondarion part of the PID.
+//Will adjust the pulse of motor 1 according to motor 0. 
+//(error + correction to get desired speed)
+double Ponderation(int readPulse, int desiredPulse, int counter, int cycles, int speed)
+{
+  double kP = 0.0001;
+  double kI = 0.00002;
+  int error = ((cycles*desiredPulse)-counter) - counter;
+  int correction = desiredPulse - error;
+
+  return speed + ((error*kP) + (correction*kI));
+}
+
 /* ****************************************************************************
 Fonctions d'initialisation (setup)
 **************************************************************************** */
@@ -93,45 +122,53 @@ Fonctions de boucle infini (loop())
 
 void loop() {
 
-  int left = 1;
-  int right = 0;
+  //Array of all movements with fine tuned values.
+  int movementArray1[2][9] = {{215,34,28,30,18,38,57,28,84},{-90,90,90,-90,45,-90,45,13}};
 
-  //int movementArray[9][9] = {{215,34,28,30,18,38,57,28,84},{-90,90,90,-90,45,-90,45,13}};
+  //Should get the number of rows for the first column.
+  int arraySize = sizeof(movementArray1[0]) / sizeof(int);
 
+  //Loops through the 2d array to get forward and turn values.
+  //The first pair of brackets of the array is the columns, the second is the rows.
+  for (size_t i = 0; i < arraySize; i++){
+    Forward(movementArray1[0][i]);
+    Turn(movementArray1[1][i]);
+  }
   
-  Forward(215);
+  //Hardcoded way
+  /*Forward(215);
   
-  Turn(left, 90);
+  Turn(-90);
   
   Forward(34);
   
-  Turn(right, 90);
+  Turn(90);
   
   Forward(28);
   
-  Turn(right,90);
+  Turn(90);
   
   Forward(30);
   
-  Turn(left, 90);
+  Turn(-90);
   
   Forward(18);
   
-  Turn(right,45);
+  Turn(45);
   
   Forward(38);
   
-  Turn(left, 90);
+  Turn(-90);
 
   Forward(57);
   
-  Turn(right, 45);
+  Turn(45);
 
   Forward(28);
 
-  Turn(right,13);
+  Turn(13);
 
-  Forward(84);
+  Forward(84);*/
 
   exit(0);
 }
