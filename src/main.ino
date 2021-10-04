@@ -54,6 +54,7 @@ void Forward(int distance){
       MOTOR_SetSpeed(1, 0.30);
     }*/
     else {
+      speed = speed * Decceleration(pulseCounter,distance * distanceConstant);
       pCorrection = Ponderation(distanceMotor0, distanceMotor1, pulseCounter, cycle, speed);
       MOTOR_SetSpeed(0,speed);
       MOTOR_SetSpeed(1,pCorrection);
@@ -71,10 +72,14 @@ void Forward(int distance){
 //If the angle is negative the robot will turn to the left.
 void Turn(int angle){
   int distanceMotor;
-  int id = angle < 0 ? 1 : 0;
+  int id;
   int angleConstant = 44.4;
   bool maxDistance = false;
  
+  if(angle < 0){
+    id = 1;
+    angle = angle * -1;
+  }
   
   while(!maxDistance){
     distanceMotor =  ENCODER_Read(id);
@@ -118,6 +123,7 @@ void Full180(){
       delay(200);
     }
     else {
+      speed = speed * Decceleration(pulseCounter, 180 * angleConstant);
       pCorrection = Ponderation(distanceMotor0, distanceMotor1, pulseCounter, cycle, speed);
       MOTOR_SetSpeed(0,speed);
       MOTOR_SetSpeed(1,pCorrection);
@@ -128,6 +134,22 @@ void Full180(){
     delay(10);
 
   }
+}
+
+//Basic decceleration function
+double Decceleration(int counter, int maxDistance){
+  if(counter >= 0.85 * maxDistance){
+    if(counter <= 0.90 * maxDistance){
+      return 0.6;
+    }
+    else if(counter <= 0.95 * maxDistance){
+      return 0.4;
+    }
+
+    return 0.2;
+  }
+
+  return 1;
 }
 
 //Pondarion part of the PID.
@@ -162,7 +184,7 @@ Fonctions de boucle infini (loop())
 void loop() {
 
   //Array of all movements with fine tuned values.
-  int movementArray1[2][9] = {{215,34,28,30,18,38,57,28,84},{-90,90,90,-90,45,-90,45,13}};
+  int movementArray1[2][9] = {{215,34,28,30,18,38,57,28,84},{-90,90,90,-90,45,-90,45,13,0}};
 
   //Should get the number of rows for the first column.
   int arraySize = sizeof(movementArray1[0]) / sizeof(int);
@@ -194,7 +216,8 @@ void loop() {
   
   
   //Hardcoded way
-  /*Forward(215);
+  /*
+  Forward(215);
   
   Turn(-90);
   
