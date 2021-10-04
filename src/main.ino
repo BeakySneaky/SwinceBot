@@ -29,9 +29,10 @@ Vos propres fonctions sont creees ici
 void Forward(int distance){
 
   int distanceConstant = 133.673443;
+  int speed = 0.4;
   int cycle = 0;
   int pulseCounter = 0;
-   int distanceMotor0;
+  int distanceMotor0;
   int distanceMotor1;
   double pCorrection;
   bool maxDistance = false;
@@ -53,8 +54,8 @@ void Forward(int distance){
       MOTOR_SetSpeed(1, 0.30);
     }*/
     else {
-      pCorrection = Ponderation(distanceMotor0, distanceMotor1, pulseCounter, cycle, 0.4);
-      MOTOR_SetSpeed(0,0.4);
+      pCorrection = Ponderation(distanceMotor0, distanceMotor1, pulseCounter, cycle, speed);
+      MOTOR_SetSpeed(0,speed);
       MOTOR_SetSpeed(1,pCorrection);
     }
       //Read pulsation graph with serial plotter.
