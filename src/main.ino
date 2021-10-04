@@ -63,6 +63,7 @@ void Forward(int distance){
       Serial.println(distanceMotor1);
       ENCODER_Reset(0);
       ENCODER_Reset(1);
+      delay(10);
   }
 }
 
@@ -87,6 +88,7 @@ void Turn(int angle){
         MOTOR_SetSpeed(id,0.3);
       }
   }
+  
   ENCODER_Reset(0);
   ENCODER_Reset(1);
 }
@@ -123,8 +125,9 @@ void Full180(){
 
     ENCODER_Reset(0);
     ENCODER_Reset(1);
-  }
+    delay(10);
 
+  }
 }
 
 //Pondarion part of the PID.
