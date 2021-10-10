@@ -39,12 +39,10 @@ void Forward(int distance){
   
   while(!maxDistance){ 
 
-    cycle++;  
     distanceMotor0 = ENCODER_Read(0);
     distanceMotor1 = ENCODER_Read(1);
     pulseCounterMaster += distanceMotor0;
-    pulseCounterSlave += distanceMotor1;
-    
+
     if(pulseCounterMaster >= distanceConstant){
       MOTOR_SetSpeed(0,0);
       MOTOR_SetSpeed(1,0);
@@ -56,14 +54,19 @@ void Forward(int distance){
       //Acceleration and decceleration condition
 
       if(speed < maxSpeed){
-        speed += 0.0016;
+        pCorrection = speed += 0.0016;
       }
       //Find speed at which robot stops well.
       else if (pulseCounterMaster >= 0.7 * distanceConstant && speed > 0.2){
-        speed -= 0.0016;
+        pCorrection = speed -= 0.0016;
+      }
+      else
+      {
+        cycle++;  
+        pulseCounterSlave += distanceMotor1;
+        pCorrection = speed + PID(distanceMotor1, distanceMotor0, pulseCounterSlave, cycle);
       }
       
-      pCorrection = speed + PID(distanceMotor1, distanceMotor0, pulseCounterSlave, cycle);
 
       //Serial.println(distanceMotor0);
       MOTOR_SetSpeed(0,speed);
@@ -163,7 +166,7 @@ Fonctions de boucle infini (loop())
 void loop() {
 
   //Array of all movements with fine tuned values.
-  int movementArray1[2][9] = {{215,34,28,30,18,38,57,28,84},{-90,90,90,-90,45,-90,45,13,0}};
+  int movementArray1[2][9] = {{215,34,28,30,18,38,57,28,84},{-90,90,90,-90,45,-90,45,13,-13}};
   //Should get the number of rows for the first column.
   int arraySize = sizeof(movementArray1[0]) / sizeof(int);
 
@@ -173,8 +176,6 @@ void loop() {
     Forward(movementArray1[0][i]);
     Turn(movementArray1[1][i]);
   }
-
-  Turn(180);
 
   exit(0);
 }
