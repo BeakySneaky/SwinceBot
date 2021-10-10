@@ -83,7 +83,7 @@ void Turn(int angle){
 
   int id = 0;
   int distanceMotor;
-  double angleConstant = 44.4;
+  double angleConstant = 44.33;
 
   speed = 0;
   maxSpeed = 0.4;
@@ -98,7 +98,7 @@ void Turn(int angle){
     
     distanceMotor =  ENCODER_Read(id);
 
-      if(distanceMotor > angle * angleConstant){
+      if(distanceMotor > ceil(angle * angleConstant)){
         MOTOR_SetSpeed(id,0);
         maxDistance = true;
         delay(200);
@@ -109,7 +109,7 @@ void Turn(int angle){
       if(speed < maxSpeed){
         speed += 0.0016;
       }
-      else if (distanceMotor >= 0.7 * angleConstant && speed > 0.2){
+      else if (distanceMotor >= ceil(0.7 * angleConstant) && speed > 0.2){
         speed -= 0.0016;
       }
 
