@@ -19,7 +19,10 @@ Variables globales et defines
 // -> defines...
 // L'ensemble des fonctions y ont acces
 
-
+bool maxDistance;
+double maxSpeed;
+float speed, pCorrection;
+int cycle, pulseCounterMaster, pulseCounterSlave, distanceMotor0, distanceMotor1;
 
 /* ****************************************************************************
 Vos propres fonctions sont creees ici
@@ -28,24 +31,21 @@ Vos propres fonctions sont creees ici
 //Makes the robot move forward.
 void Forward(int distance){
 
-  double distanceConstant = distance * 133.673443;
-  double maxSpeed = 0.4;
-  double speed = 0.4;
-  int cycle = 0;
-  int pulseCounter = 0;
-  int distanceMotor0;
-  int distanceMotor1;
-  double pCorrection;
-  bool maxDistance = false;
+  float distanceConstant = distance * 133.673443;
+  
+  maxDistance = false;
+  maxSpeed = 0.4;
+  pulseCounterMaster, pulseCounterSlave, speed, cycle = 0;
   
   while(!maxDistance){ 
 
     cycle++;  
     distanceMotor0 = ENCODER_Read(0);
     distanceMotor1 = ENCODER_Read(1);
-    pulseCounter += distanceMotor0;
+    pulseCounterMaster += distanceMotor0;
+    pulseCounterSlave += distanceMotor1;
     
-    if(pulseCounter >= distanceConstant){
+    if(pulseCounterMaster >= distanceConstant){
       MOTOR_SetSpeed(0,0);
       MOTOR_SetSpeed(1,0);
       maxDistance = true;
@@ -54,38 +54,40 @@ void Forward(int distance){
     else {
       
       //Acceleration and decceleration condition
-      /*if(pulseCounter <= 0.2 * distanceConstant && speed < maxSpeed){
-        speed += 0.05;
+
+      if(speed < maxSpeed){
+        speed += 0.0016;
       }
-      else*/
-      if (pulseCounter >= 0.8 * distanceConstant && speed > 0.2){
-        speed = speed / 1.05;
-        pCorrection = speed;
+      //Find speed at which robot stops well.
+      else if (pulseCounterMaster >= 0.7 * distanceConstant && speed > 0.2){
+        speed -= 0.0016;
       }
-      else{
-        pCorrection = Ponderation(distanceMotor1, distanceMotor0, pulseCounter, cycle, speed);
-      }
+      
+      pCorrection = speed + PID(distanceMotor1, distanceMotor0, pulseCounterSlave, cycle);
 
       //Serial.println(distanceMotor0);
       MOTOR_SetSpeed(0,speed);
       MOTOR_SetSpeed(1,pCorrection);
     }
-      //Read pulsation graph with serial plotter.
-      ENCODER_Reset(0);
-      ENCODER_Reset(1);
-      delay(20);
-  }
+      //Read pulsation graph with serial plotter & reset.
+      Serial.println(ENCODER_ReadReset(0));
+      Serial.println(ENCODER_ReadReset(1));
+      delay(10);
+
+    }
 }
 
 //Makes the robot turn in fonction of the angle.
 //If the angle is negative the robot will turn to the left.
 void Turn(int angle){
-  int distanceMotor;
+
   int id = 0;
-  double speed = 0.2;
-  double maxSpeed = 0.4;
-  int angleConstant = 44.4;
-  bool maxDistance = false;
+  int distanceMotor;
+  double angleConstant = 44.4;
+
+  speed = 0;
+  maxSpeed = 0.4;
+  maxDistance = false;
  
   if(angle < 0){
     id = 1;
@@ -93,8 +95,9 @@ void Turn(int angle){
   }
   
   while(!maxDistance){
+    
     distanceMotor =  ENCODER_Read(id);
-      
+
       if(distanceMotor > angle * angleConstant){
         MOTOR_SetSpeed(id,0);
         maxDistance = true;
@@ -102,33 +105,43 @@ void Turn(int angle){
       }
       else {
 
-        //Acceleration and decceleration condition
-      /*if(distanceMotor <= 0.3 * angleConstant && speed < maxSpeed){
-        speed += 0.1;
+       //Acceleration and decceleration condition
+      if(speed < maxSpeed){
+        speed += 0.0016;
       }
       else if (distanceMotor >= 0.7 * angleConstant && speed > 0.2){
-        speed = speed / 1.1;
-      }*/
-
-        MOTOR_SetSpeed(id,maxSpeed);
+        speed -= 0.0016;
       }
+
+        MOTOR_SetSpeed(id,speed);
+      }
+      
+      delay(10);
   }
-  
-  ENCODER_Reset(0);
-  ENCODER_Reset(1);
+  ENCODER_Reset(id);
 }
 
 //Pondarion part of the PID.
-//Will adjust the pulse of motor 1 according to motor 0. 
-//(error + correction to get desired speed)
-double Ponderation(int readPulse, int desiredPulse, int counter, int cycles, double speed)
+float Ponderation(int readPulse, int desiredPulse)
 {
-  double kP = 0.0001;
-  double kI = 0.00002;
-  double error = desiredPulse - readPulse;
-  double correction = (cycles*desiredPulse - counter);
+  float kP = 0.0001;
+  int error = desiredPulse - readPulse;
 
-  return speed + ((error*kP) + (correction*kI));
+  return error*kP;
+}
+
+//Integration part of the PID
+float Integration(int desiredPulse, int counter, int cycles){
+
+  float kI = 0.00002;
+  int correction = (cycles*desiredPulse - counter);
+
+  return correction*kI;
+}
+
+//PID Function
+float PID(int readPulse, int desiredPulse, int counter, int cycles){
+  return Ponderation(readPulse, desiredPulse) + Integration(desiredPulse, counter, cycles);
 }
 
 /* ****************************************************************************
@@ -156,16 +169,17 @@ void loop() {
 
   //Loops through the 2d array to get forward and turn values.
   //The first pair of brackets of the array is the columns, the second is the rows.
-  /*for (size_t i = 0; i < arraySize; i++){
+  for (int i = 0; i < arraySize; i++){
     Forward(movementArray1[0][i]);
     Turn(movementArray1[1][i]);
-  }*/
+  }
 
-  Forward(100);
   Turn(180);
-  Forward(100);
 
-  //Hardcoded way
+  exit(0);
+}
+
+//Hardcoded way
   /*
   Forward(215);
   
@@ -200,6 +214,3 @@ void loop() {
   Turn(13);
 
   Forward(84);*/
-
-  exit(0);
-}
