@@ -35,7 +35,7 @@ void Forward(int distance){
   
   maxDistance = false;
   maxSpeed = 0.4;
-  pulseCounterMaster, pulseCounterSlave, speed, cycle = 0;
+  pulseCounterMaster = pulseCounterSlave = speed = cycle = 0;
   
   while(!maxDistance){ 
 
@@ -98,7 +98,7 @@ void Turn(int angle){
     
     distanceMotor =  ENCODER_Read(id);
 
-      if(distanceMotor > ceil(angle * angleConstant)){
+      if(distanceMotor > angle * angleConstant){
         MOTOR_SetSpeed(id,0);
         maxDistance = true;
         delay(200);
@@ -109,7 +109,7 @@ void Turn(int angle){
       if(speed < maxSpeed){
         speed += 0.0016;
       }
-      else if (distanceMotor >= ceil(0.7 * angleConstant) && speed > 0.2){
+      else if (distanceMotor >= 0.7 * angleConstant && speed > 0.2){
         speed -= 0.0016;
       }
 
