@@ -83,7 +83,7 @@ void Turn(int angle){
 
   int id = 0;
   int distanceMotor;
-  double angleConstant = 44.33;
+  double angleConstant = 44.32779236;
 
   speed = 0;
   maxSpeed = 0.4;
