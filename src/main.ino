@@ -47,7 +47,7 @@ void Forward(int distance){
       MOTOR_SetSpeed(0,0);
       MOTOR_SetSpeed(1,0);
       maxDistance = true;
-      delay(200);
+      delay(100);
     }
     else {
       
@@ -59,19 +59,19 @@ void Forward(int distance){
            pCorrection -= 0.005;
         }
         else{
-          pCorrection -= 0.015;
-          speed -= 0.015;
+          pCorrection -= 0.02;
+          speed -= 0.02;
         }
       }
       else if (speed < maxSpeed){
-         pCorrection = speed += 0.05;
+         pCorrection = speed += 0.01;
       }
       else
       {
         cycle++;
         speed = maxSpeed;  
         pulseCounterSlave += distanceMotor1;
-        pCorrection = speed + PID(distanceMotor1, distanceMotor0, pulseCounterSlave, cycle, 0.35, 0.45);
+        pCorrection = speed + PID(distanceMotor1, distanceMotor0, pulseCounterSlave, cycle);
       }
       
 
@@ -92,7 +92,7 @@ void Turn(int angle){
 
   int id = 0;
   int distanceMotor;
-  float angleConstant = 44.3327;
+  float angleConstant = 44.32779;
   speed = 0;
   maxSpeed = 0.4;
   maxDistance = false;
@@ -114,19 +114,20 @@ void Turn(int angle){
       if(distanceMotor >= angle * angleConstant){
         MOTOR_SetSpeed(id,0);
         maxDistance = true;
+        delay(100);
       }
       else {
 
        //Acceleration and decceleration condition
-      /*if(distanceMotor > 0.5 * (angle * angleConstant) && speed > 0.2){
-        speed -= 0.01;
+      if(distanceMotor > 0.8 * (angle * angleConstant) && speed > 0.1){
+        speed -= 0.005;
 
       }
       else if (speed < maxSpeed){
-        speed += 0.01;
-      }*/
+        speed += 0.005;
+      }
 
-        MOTOR_SetSpeed(id,maxSpeed);
+        MOTOR_SetSpeed(id,speed);
       }
       
       delay(10);
@@ -137,9 +138,9 @@ void Turn(int angle){
 void Full180(){
 
   int distanceMotor;
-  float angleConstant = 44.2;
+  float angleConstant = 44.32779;
 
-  int angle = 85;
+  int angle = 90;
   //85 pour A4 90 pour B4
   speed = 0;
   maxSpeed = 0.3;
@@ -159,7 +160,6 @@ void Full180(){
     else {
       if(distanceMotor > 0.5 * (angle * angleConstant) && speed > 0.2){
         speed -= 0.005;
-
       }
       else if (speed < maxSpeed){
         speed += 0.005;
@@ -186,15 +186,15 @@ float Ponderation(int readPulse, int desiredPulse)
 
 //Integration part of the PID
 float Integration(int desiredPulse, int counter, int cycles){
-  //0.000008 pour A4 -0.000004 pour B4;
-  float kI = 0.000007;
+  //0.000006 pour A4 -0.000004 pour B4;
+  float kI = -0.000004;
   int correction = (cycles*desiredPulse - counter);
   return correction*kI;
 }
 
 //Derivative part, to be tested.
 float Derivation(int readPulse, int desiredPulse){
-  float kD = 0.00002;
+  float kD = 0.00001;
   int error = readPulse - desiredPulse;
   double derivative = (error - preError); 
   preError = error;
@@ -202,16 +202,10 @@ float Derivation(int readPulse, int desiredPulse){
 }
 
 //PID Function
-float PID(int readPulse, int desiredPulse, int counter, int cycles, double min, double max){
+float PID(int readPulse, int desiredPulse, int counter, int cycles){
 
-  float result = Ponderation(readPulse, desiredPulse) + Integration(desiredPulse, counter, cycles) + Derivation(readPulse, desiredPulse);
+  float result = Ponderation(readPulse, desiredPulse) + Integration(desiredPulse, counter, cycles) + Derivation(readPulse,desiredPulse);
   
-  if(result > max){
-    return max;
-  }
-  else if (result < min){
-    return min;
-  }
 
   return result;
 }
