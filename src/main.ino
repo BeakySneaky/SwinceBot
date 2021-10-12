@@ -34,7 +34,7 @@ void Forward(int distance){
   float distanceConstant = distance * 133.673443;
   
   maxDistance = false;
-  maxSpeed = 0.4;
+  maxSpeed = 0.7;
   pulseCounterMaster = pulseCounterSlave = speed = cycle = preError = 0;
   
   while(!maxDistance){ 
@@ -55,16 +55,16 @@ void Forward(int distance){
 
       if(pulseCounterMaster > 0.9 * distanceConstant && speed > 0.2){
         if(distance > 80){
-           speed -= 0.005;
-           pCorrection -= 0.005;
+           speed -= 0.008;
+           pCorrection -= 0.008;
         }
         else{
-          pCorrection -= 0.02;
-          speed -= 0.02;
+          pCorrection -= 0.03;
+          speed -= 0.03;
         }
       }
-      else if (speed < maxSpeed){
-         pCorrection = speed += 0.01;
+      else if (pulseCounterMaster < 0.3 * distanceConstant && speed < maxSpeed){
+         pCorrection = speed += 0.005;
       }
       else
       {
@@ -103,9 +103,9 @@ void Turn(int angle){
   }
 
   //Seulement pour les moteurs bizarre de B4
-  if(id == 1){
+  /*if(id == 1){
     angleConstant = 42.9;
-  }
+  }*/
   
   while(!maxDistance){
     
@@ -121,7 +121,6 @@ void Turn(int angle){
        //Acceleration and decceleration condition
       if(distanceMotor > 0.8 * (angle * angleConstant) && speed > 0.1){
         speed -= 0.005;
-
       }
       else if (speed < maxSpeed){
         speed += 0.005;
@@ -186,15 +185,15 @@ float Ponderation(int readPulse, int desiredPulse)
 
 //Integration part of the PID
 float Integration(int desiredPulse, int counter, int cycles){
-  //0.000006 pour A4 -0.000004 pour B4;
-  float kI = -0.000004;
+  //0.000006 pour A4 -0.000004 ou 0.000026 pour B4;
+  float kI = 0.000006;
   int correction = (cycles*desiredPulse - counter);
   return correction*kI;
 }
 
 //Derivative part, to be tested.
 float Derivation(int readPulse, int desiredPulse){
-  float kD = 0.00001;
+  float kD = 0.001;
   int error = readPulse - desiredPulse;
   double derivative = (error - preError); 
   preError = error;
@@ -204,9 +203,8 @@ float Derivation(int readPulse, int desiredPulse){
 //PID Function
 float PID(int readPulse, int desiredPulse, int counter, int cycles){
 
-  float result = Ponderation(readPulse, desiredPulse) + Integration(desiredPulse, counter, cycles) + Derivation(readPulse,desiredPulse);
+  float result = Ponderation(readPulse, desiredPulse) + Integration(desiredPulse, counter, cycles);
   
-
   return result;
 }
 
