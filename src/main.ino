@@ -22,7 +22,7 @@ Variables globales et defines
 bool maxDistance;
 double maxSpeed;
 float speed, pCorrection;
-int cycle, pulseCounterMaster, pulseCounterSlave, distanceMotor0, distanceMotor1;
+int cycle, pulseCounterMaster, pulseCounterSlave, distanceMotor0, distanceMotor1, preError;
 
 /* ****************************************************************************
 Vos propres fonctions sont creees ici
@@ -35,7 +35,7 @@ void Forward(int distance){
   
   maxDistance = false;
   maxSpeed = 0.4;
-  pulseCounterMaster = pulseCounterSlave = speed = cycle = 0;
+  pulseCounterMaster = pulseCounterSlave = speed = cycle = preError = 0;
   
   while(!maxDistance){ 
 
@@ -71,7 +71,7 @@ void Forward(int distance){
         cycle++;
         speed = maxSpeed;  
         pulseCounterSlave += distanceMotor1;
-        pCorrection = speed + PID(distanceMotor1, distanceMotor0, pulseCounterSlave, cycle);
+        pCorrection = speed + PID(distanceMotor1, distanceMotor0, pulseCounterSlave, cycle, 0.35, 0.45);
       }
       
 
@@ -192,9 +192,28 @@ float Integration(int desiredPulse, int counter, int cycles){
   return correction*kI;
 }
 
+//Derivative part, to be tested.
+float Derivation(int readPulse, int desiredPulse){
+  float kD = 0.00002;
+  int error = readPulse - desiredPulse;
+  double derivative = (error - preError); 
+  preError = error;
+  return derivative * kD;
+}
+
 //PID Function
-float PID(int readPulse, int desiredPulse, int counter, int cycles){
-  return Ponderation(readPulse, desiredPulse) + Integration(desiredPulse, counter, cycles);
+float PID(int readPulse, int desiredPulse, int counter, int cycles, double min, double max){
+
+  float result = Ponderation(readPulse, desiredPulse) + Integration(desiredPulse, counter, cycles) + Derivation(readPulse, desiredPulse);
+  
+  if(result > max){
+    return max;
+  }
+  else if (result < min){
+    return min;
+  }
+
+  return result;
 }
 
 /* ****************************************************************************
