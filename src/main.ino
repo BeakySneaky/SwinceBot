@@ -35,8 +35,7 @@ void Forward(int distance){
   
   maxDistance = false;
   maxSpeed = 0.4;
-  pulseCounterMaster = 0;
-  pulseCounterSlave = speed = cycle = 0;
+  pulseCounterMaster = pulseCounterSlave = speed = cycle = 0;
   
   while(!maxDistance){ 
 
@@ -44,22 +43,24 @@ void Forward(int distance){
     distanceMotor1 = ENCODER_Read(1);
     pulseCounterMaster += distanceMotor0;
 
-    if(pulseCounterMaster > distanceConstant){
+    if(pulseCounterMaster >= distanceConstant){
       MOTOR_SetSpeed(0,0);
       MOTOR_SetSpeed(1,0);
       maxDistance = true;
+      delay(200);
     }
     else {
       
       //Acceleration and decceleration condition
 
-      if(pulseCounterMaster > 0.7 * distanceConstant && speed > 0.2){
+      if(pulseCounterMaster > 0.9 * distanceConstant && speed > 0.2){
         if(distance > 80){
-           speed -= 0.0016;
-           pCorrection -= 0.0016;
+           speed -= 0.005;
+           pCorrection -= 0.005;
         }
         else{
-          pCorrection = speed -= 0.015;
+          pCorrection -= 0.015;
+          speed -= 0.015;
         }
       }
       else if (speed < maxSpeed){
@@ -91,8 +92,7 @@ void Turn(int angle){
 
   int id = 0;
   int distanceMotor;
-  float angleConstant = 44.2;
-  //44.2 pour A4
+  float angleConstant = 44.3327;
   speed = 0;
   maxSpeed = 0.4;
   maxDistance = false;
@@ -104,29 +104,29 @@ void Turn(int angle){
 
   //Seulement pour les moteurs bizarre de B4
   if(id == 1){
-    angleConstant = 42.6;
+    angleConstant = 42.9;
   }
   
   while(!maxDistance){
     
     distanceMotor =  ENCODER_Read(id);
 
-      if(distanceMotor > angle * angleConstant){
+      if(distanceMotor >= angle * angleConstant){
         MOTOR_SetSpeed(id,0);
         maxDistance = true;
       }
       else {
 
        //Acceleration and decceleration condition
-      if(distanceMotor > 0.5 * (angle * angleConstant) && speed > 0.2){
-        speed -= 0.005;
+      /*if(distanceMotor > 0.5 * (angle * angleConstant) && speed > 0.2){
+        speed -= 0.01;
 
       }
       else if (speed < maxSpeed){
-        speed += 0.005;
-      }
+        speed += 0.01;
+      }*/
 
-        MOTOR_SetSpeed(id,speed);
+        MOTOR_SetSpeed(id,maxSpeed);
       }
       
       delay(10);
@@ -139,8 +139,8 @@ void Full180(){
   int distanceMotor;
   float angleConstant = 44.2;
 
-  int angle = 90;
-  //85 pour A4
+  int angle = 85;
+  //85 pour A4 90 pour B4
   speed = 0;
   maxSpeed = 0.3;
   maxDistance = false;
@@ -186,8 +186,8 @@ float Ponderation(int readPulse, int desiredPulse)
 
 //Integration part of the PID
 float Integration(int desiredPulse, int counter, int cycles){
-  //0.000008 pour A4;
-  float kI = -0.000004;
+  //0.000008 pour A4 -0.000004 pour B4;
+  float kI = 0.000007;
   int correction = (cycles*desiredPulse - counter);
   return correction*kI;
 }
@@ -216,7 +216,7 @@ Fonctions de boucle infini (loop())
 void loop() {
 
   //Array of all movements with fine tuned values.
-  int movementArray1[2][9] = {{200,25,25,25,15,35,55,35,70},{-90,90,90,-90,45,-90,45,15,0}};
+  int movementArray1[2][9] = {{205,30,30,30,10,35,58,30,80},{-90,90,90,-90,45,-90,45,11,0}};
   //Should get the number of rows for the first column.
   int arraySize = sizeof(movementArray1[0]) / sizeof(int);
 
@@ -233,7 +233,6 @@ void loop() {
   for (size_t j = 0; j < arraySize; j++)
   {
     movementArray1[1][j] = movementArray1[1][j] * -1;
-    Serial.println(movementArray1[1][j]);
   }
   //Then we make it go from the last distance to the first.
   for (int i = arraySize - 1; i >= 0; i--)
