@@ -201,7 +201,7 @@ while  (distance >40 )
   Avancer(distance+10); 
 }
 
-void DragNDropBall()
+void DragNDropBall()//rouge
 {  
 
   Avancer(35);
@@ -213,7 +213,7 @@ void DragNDropBall()
     
 
   }
-  if (couleur()==2)
+  if (couleur()==2)//bleu
 {
   Tourner(90);
   delay(100);
@@ -224,7 +224,7 @@ void DragNDropBall()
    
 
 }
-  if (couleur()==3)
+  if (couleur()==3)//jaune
 {
   Tourner(-90);
   delay(100); 
@@ -238,4 +238,45 @@ void DragNDropBall()
   CatchNRelease(0); 
 }
 
+void RetourStart()
+{
+
+  Tourner(180);
+  delay (100);
+     
+  if (couleur()==1)
+  {
+    Avancer(310);
+
+  }
+  if (couleur()==2)
+{
+  Avancer(250);
+  
+  Tourner(90);
+  
+  Avancer(30);
+
+  Tourner(-90);
+  
+  Avancer(60);
+
+}
+  if (couleur()==3)
+{
+  
+  Avancer(250);
+ 
+  Tourner(-90);
+
+  Avancer(30);
+
+  Tourner(90);
+
+  Avancer(60);
+
+}
+}
+
 int couleur() { return 1;}
+

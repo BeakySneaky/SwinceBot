@@ -26,6 +26,9 @@ void FindNPushPin();
 
 void DragNDropBall();
 
+// retourner au start
+void RetourStart();
+
 int couleur();
 
 #endif
