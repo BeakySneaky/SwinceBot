@@ -22,5 +22,10 @@ float pid(int nb_pulse_droite, int nb_pulse_gauche, float vitesse_droite);
 //Fonction pour le servo
 void CatchNRelease(bool release);
 
+void FindNPushPin();
+
+void DragNDropBall();
+
+int couleur();
 
 #endif

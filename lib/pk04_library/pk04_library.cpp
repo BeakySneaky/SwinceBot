@@ -8,6 +8,8 @@
 const float roue = 18.9; //A Croquette
 const float variation  = 0.001;
 float speed = 0.45;
+//Fix temporaire, émile sais quoi faire.
+int LedVerte = 44;
 
 
 //Implémentez vos fonction ici
@@ -177,3 +179,63 @@ void CatchNRelease(bool release){
 
 }
 
+void FindNPushPin()
+{ 
+    
+  float distance= 100; 
+  distance= SONAR_GetRange(0); 
+
+while  (distance >40 ) 
+{
+  distance= SONAR_GetRange(0); 
+  delay(100); 
+}
+
+  LedVerte= HIGH; 
+  Tourner(90);
+  delay(100); 
+  Avancer(distance+10); 
+  LedVerte=LOW;
+  Tour180(); 
+  delay(100); 
+  Avancer(distance+10); 
+}
+
+void DragNDropBall()
+{  
+
+  Avancer(35);
+  CatchNRelease(1); 
+
+  if (couleur()==1)
+  {
+    Avancer(250);
+    
+
+  }
+  if (couleur()==2)
+{
+  Tourner(90);
+  delay(100);
+  Avancer(60);
+  Tourner(-90);
+  delay(100); 
+  Avancer(250);
+   
+
+}
+  if (couleur()==3)
+{
+  Tourner(-90);
+  delay(100); 
+  Avancer(60);
+  Tourner(90); 
+  delay(100);
+  Avancer(250);
+ 
+}
+  delay(1000);
+  CatchNRelease(0); 
+}
+
+int couleur() { return 1;}
