@@ -240,16 +240,19 @@ void DragNDropBall()//rouge
 
 void RetourStart()
 {
-
   Tourner(180);
   delay (100);
      
-  if (couleur()==1)
+  if (couleur()==1) //rouge
+  // retourne vers le circuit directement
+
   {
     Avancer(310);
 
   }
-  if (couleur()==2)
+  if (couleur()==2) //bleu
+  // retourne vers le circuit directement(se dirige legerement vers le centre)
+
 {
   Avancer(250);
   
@@ -262,7 +265,8 @@ void RetourStart()
   Avancer(60);
 
 }
-  if (couleur()==3)
+  if (couleur()==3 )//jaune
+// retourne vers le circuit directement(se dirige legerement vers le centre)
 {
   
   Avancer(250);
