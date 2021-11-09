@@ -187,7 +187,7 @@ void CatchNRelease(bool release){
   angle = 165;
 
   SERVO_SetAngle(0,angle);
-  delay(1750);
+  delay(1000);
 
 }
 
@@ -276,40 +276,40 @@ void DragNDropBall(int color)//rouge
   CatchNRelease(1); 
 }
 
-void RetourStart()
+void RetourStart(int color)
 {
   Tourner(180, turn);
   delay (100);
      
-  if (couleur()==1) //rouge
+  if (color==1) //rouge
   // retourne vers le circuit directement
 
   {
     Avancer(310, vroom);
 
   }
-  if (couleur()==2) //bleu
+  if (color==2) //bleu
   // retourne vers le circuit directement(se dirige legerement vers le centre)
 
 {
   Avancer(250, vroom);
   
-  Tourner(90, turn);
+  Tourner(-90, turn);
   
   Avancer(30, vroom);
 
-  Tourner(-90, turn);
+  Tourner(90, turn);
   
   Avancer(60, vroom);
 
 }
-  if (couleur()==3 )//jaune
+  if (color==3 )//jaune
 // retourne vers le circuit directement(se dirige legerement vers le centre)
 {
   
   Avancer(250, vroom);
  
-  Tourner(-90, turn);
+  Tourner(90, turn);
 
   Avancer(30, vroom);
 

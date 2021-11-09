@@ -10,29 +10,30 @@
             "includePath": [
                 "C:/Users/emile/SwinceBot/include",
                 "C:/Users/emile/SwinceBot/src",
+                "C:/Users/emile/SwinceBot/lib/pk04_library",
                 "C:/Users/emile/SwinceBot/build/piolibdeps/megaatmega2560/LibRobus/src",
                 "C:/Users/emile/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
                 "C:/Users/emile/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
                 "C:/Users/emile/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
                 "C:/Users/emile/.platformio/packages/framework-arduino-avr/cores/arduino",
                 "C:/Users/emile/.platformio/packages/framework-arduino-avr/variants/mega",
-                "C:/Users/emile/SwinceBot/lib/pk04_library",
                 "C:/Users/emile/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
                 "C:/Users/emile/.platformio/packages/framework-arduino-avr/libraries/HID/src",
-                "C:/Users/emile/.platformio/packages/tool-unity"
+                "C:/Users/emile/.platformio/packages/tool-unity",
+                ""
             ],
             "browse": {
                 "limitSymbolsToIncludedHeaders": true,
                 "path": [
                     "C:/Users/emile/SwinceBot/include",
                     "C:/Users/emile/SwinceBot/src",
+                    "C:/Users/emile/SwinceBot/lib/pk04_library",
                     "C:/Users/emile/SwinceBot/build/piolibdeps/megaatmega2560/LibRobus/src",
                     "C:/Users/emile/.platformio/packages/framework-arduino-avr/libraries/SoftwareSerial/src",
                     "C:/Users/emile/.platformio/packages/framework-arduino-avr/libraries/SPI/src",
                     "C:/Users/emile/.platformio/packages/framework-arduino-avr/libraries/Wire/src",
                     "C:/Users/emile/.platformio/packages/framework-arduino-avr/cores/arduino",
                     "C:/Users/emile/.platformio/packages/framework-arduino-avr/variants/mega",
-                    "C:/Users/emile/SwinceBot/lib/pk04_library",
                     "C:/Users/emile/.platformio/packages/framework-arduino-avr/libraries/EEPROM/src",
                     "C:/Users/emile/.platformio/packages/framework-arduino-avr/libraries/HID/src",
                     "C:/Users/emile/.platformio/packages/tool-unity",

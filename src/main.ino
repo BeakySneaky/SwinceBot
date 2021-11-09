@@ -85,7 +85,7 @@ frappe();
 while(digitalRead(cote) == 1){
 suiveurDeLigne(&vitesseG, &vitesseD);
 }
-Tourner(-130, .15);
+Tourner(-90, .15);
 
 while(1)
 {
@@ -99,12 +99,12 @@ MOTOR_SetSpeed(0,0);
 MOTOR_SetSpeed(1,0);
 delay(100);
 Avancer(15, 0.3);
-delay(1000);
+delay(500);
 flag = couleur();
 delay(100);
 Avancer(20, 0.3);
-delay(1000);
 CatchNRelease(0);
 DragNDropBall(flag);
-exit(0);
+RetourStart(flag);
+suiveurDeLigne(&vitesseG, &vitesseD);
 }

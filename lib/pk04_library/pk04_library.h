@@ -54,7 +54,7 @@ void DragNDropBall(int color);
 
 void yeet();
 // retourner au start
-void RetourStart();
+void RetourStart(int color);
 
 int sifflet();
 
