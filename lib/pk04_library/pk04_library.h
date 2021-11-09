@@ -24,16 +24,18 @@
 #define ledb 48 
 #define ledj 42 
 #define LedVerte 44
+#define cote 41
 #define mic A13
 #define commonAnode true
+
 //Définir vos fonctions ici.
 //Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 
 //Avancer
-void Avancer(float distance_voulue);
+void Avancer(float distance_voulue, float speed);
 
 //Tourner
-void Tourner(int angle);
+void Tourner(int angle, float vit);
 
 //Tour180
 void Tour180();
@@ -48,8 +50,9 @@ int Find();
 
 void frappe();
 
-void DragNDropBall();
+void DragNDropBall(int color);
 
+void yeet();
 // retourner au start
 void RetourStart();
 

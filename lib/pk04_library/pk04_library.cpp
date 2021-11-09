@@ -7,9 +7,10 @@
 #define circonference 24.24; //A Croquette
 const float roue = 18.9; //A Croquette
 const float variation  = 0.001;
-float speed = 0.45;
-
-
+float speed ;
+float vroom = .45;
+float turn = .15;
+int color = 0 ;
 bool maxDistance;
 double maxSpeed;
 float pCorrection;
@@ -23,7 +24,7 @@ int nbCasUn = 0;
 //Implémentez vos fonction ici
 Adafruit_TCS34725 tcs = Adafruit_TCS34725(TCS34725_INTEGRATIONTIME_50MS, TCS34725_GAIN_4X);
 //Fonctions de mouvement pour le robot avec  PID
-void Avancer(float distance_voulue)
+void Avancer(float distance_voulue, float speed)
 {
   float nb_pulse = (3200 * distance_voulue)/circonference;
   float variationvit = 0.18;
@@ -70,7 +71,7 @@ void Avancer(float distance_voulue)
 
 }
 
-void Tourner(int angle)
+void Tourner(int angle, float vit)
 {
   float arc = angle*(3.1416*roue)/360;
   float nb_pulse = 3200 * arc/circonference;
@@ -78,8 +79,8 @@ void Tourner(int angle)
   ENCODER_Reset(1);
     if(angle>0)
     {
-      MOTOR_SetSpeed(0, 0.15);
-      MOTOR_SetSpeed(1, -0.15);
+      MOTOR_SetSpeed(0, vit);
+      MOTOR_SetSpeed(1, -vit);
 
       while(nb_pulse >= ENCODER_Read(0) && nb_pulse >= -ENCODER_Read(1)) {
         delay(10); 
@@ -99,8 +100,8 @@ void Tourner(int angle)
     }
     else if(angle<0)
     {
-      MOTOR_SetSpeed(0, -0.15);
-      MOTOR_SetSpeed(1, 0.15);
+      MOTOR_SetSpeed(0, -vit);
+      MOTOR_SetSpeed(1, vit);
 
       nb_pulse = -1*nb_pulse;
 
@@ -127,7 +128,7 @@ void Tourner(int angle)
     ENCODER_Reset(1);
 }
 
-void Tour180(void)
+/*void Tour180(void)
 {
 
   float quartC = (3.1416/2)*roue;
@@ -157,7 +158,7 @@ void Tour180(void)
   delay(100);
   ENCODER_Reset(0);
   ENCODER_Reset(1);
-}
+}*/
 
 float pid(int nb_pulse_droite, int nb_pulse_gauche, float vitesse_droite)
 {
@@ -181,9 +182,9 @@ float pid(int nb_pulse_droite, int nb_pulse_gauche, float vitesse_droite)
 //Pour "release" (release = true) le servo va à un angle de 0 degrés.
 //Vous pouvez tweak l'angle en fonction de comment le servo est monté.
 void CatchNRelease(bool release){
-  int angle = 90;
+  int angle = 105;
   if(release)
-  angle = 0;
+  angle = 165;
 
   SERVO_SetAngle(0,angle);
   delay(1750);
@@ -212,95 +213,109 @@ digitalWrite(ledb, LOW);
 digitalWrite(ledj, LOW);
   digitalWrite(LedVerte, HIGH);
   float distance = SONAR_GetRange(0);
-  Tourner(90);
-  delay(100); 
-  Avancer(distance+20); 
+  Tourner(90, turn);
+  delay(100);
+  SERVO_SetAngle(0,35); 
+  Avancer(distance-4, vroom); 
+  yeet();
   digitalWrite(LedVerte, LOW);
 
-  Tourner(180);
+  Tourner(180, turn);
   delay(100); 
   
-  Avancer(distance+20); 
-  
+  Avancer(distance-4, vroom); 
+
+    Tourner(90, turn);
+
 }
 
-void DragNDropBall()//rouge
+void DragNDropBall(int color)//rouge
 {  
 
-  Avancer(35);
-  CatchNRelease(1); 
-
-  if (couleur()==1)
+  if (color==1)
   {
-    Avancer(250);
+    Tourner(1.5, turn);
+    Avancer(50, vroom);
+    Avancer(50, vroom);
+    Avancer(50, vroom);
+    Avancer(50, vroom);
+    Avancer(11, vroom);
     
 
   }
-  if (couleur()==2)//bleu
+  if (color==2)//bleu
 {
-  Tourner(90);
+  Tourner(-90, turn);
   delay(100);
-  Avancer(60);
-  Tourner(-90);
+  Avancer(47, vroom);
+  Tourner(92, turn);
   delay(100); 
-  Avancer(250);
+    Avancer(50, vroom);
+    Avancer(50, vroom);
+    Avancer(50, vroom);
+    Avancer(50, vroom);
+    Avancer(11, vroom);
    
 
 }
-  if (couleur()==3)//jaune
+  if (color==3)//jaune
 {
-  Tourner(-90);
+  Tourner(90, turn);
   delay(100); 
-  Avancer(60);
-  Tourner(90); 
+  Avancer(47, vroom);
+  Tourner(-89, turn); 
   delay(100);
-  Avancer(250);
+    Avancer(50, vroom);
+    Avancer(50, vroom);
+    Avancer(50, vroom);
+    Avancer(50, vroom);
+    Avancer(11, vroom);
  
 }
   delay(1000);
-  CatchNRelease(0); 
+  CatchNRelease(1); 
 }
 
 void RetourStart()
 {
-  Tourner(180);
+  Tourner(180, turn);
   delay (100);
      
   if (couleur()==1) //rouge
   // retourne vers le circuit directement
 
   {
-    Avancer(310);
+    Avancer(310, vroom);
 
   }
   if (couleur()==2) //bleu
   // retourne vers le circuit directement(se dirige legerement vers le centre)
 
 {
-  Avancer(250);
+  Avancer(250, vroom);
   
-  Tourner(90);
+  Tourner(90, turn);
   
-  Avancer(30);
+  Avancer(30, vroom);
 
-  Tourner(-90);
+  Tourner(-90, turn);
   
-  Avancer(60);
+  Avancer(60, vroom);
 
 }
   if (couleur()==3 )//jaune
 // retourne vers le circuit directement(se dirige legerement vers le centre)
 {
   
-  Avancer(250);
+  Avancer(250, vroom);
  
-  Tourner(-90);
+  Tourner(-90, turn);
 
-  Avancer(30);
+  Avancer(30, vroom);
 
-  Tourner(90);
+  Tourner(90, turn);
 
-  Avancer(60);
+  Avancer(60, vroom);
 
 }
 }
@@ -442,5 +457,21 @@ void suiveurDeLigne(float *vitesseG, float *vitesseD){
     Serial.print(*vitesseD);*/
 
 };
+void yeet()
+{
+  
+  Tourner(90, .7);
+  Tourner(-90, .7);
+  Tourner(-90, .7);
+  Tourner(90, .7);
+  SERVO_SetAngle(0, 165);
+  delay(100);
+
+
+}
+
+
+
+
 
 

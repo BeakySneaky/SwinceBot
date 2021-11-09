@@ -48,7 +48,10 @@ void setup(){
     pinMode(TEST1, INPUT);//Droite
     pinMode(TEST2, INPUT);//Milieu
     pinMode(TEST3, INPUT);//Gauche
-  
+    pinMode(cote, INPUT);//cote
+    SERVO_SetAngle(0,165);
+
+
 }
 
 /* ****************************************************************************
@@ -57,8 +60,12 @@ Fonctions de boucle infini (loop())
 // -> Se fait appeler perpetuellement suite au "setup"
 
 void loop() {
-  float vitesseG = VITESSE;
+  /*Serial.print(digitalRead(cote));
+  Serial.print("\n");
+  delay (1000);*/
+ float vitesseG = VITESSE;
   float vitesseD = VITESSE;
+  int flag; 
  // Serial.print(analogRead(mic));
 while(sifflet() == 0 )
 {
@@ -75,6 +82,29 @@ MOTOR_SetSpeed(0,0);
 MOTOR_SetSpeed(1,0);
 delay(10);
 frappe();
+while(digitalRead(cote) == 1){
 suiveurDeLigne(&vitesseG, &vitesseD);
+}
+Tourner(-130, .15);
 
+while(1)
+{
+suiveurDeLigne(&vitesseG, &vitesseD);
+if ((digitalRead(TEST2) == 0) && (digitalRead(TEST1) == 0) && (digitalRead(TEST3) == 0))
+{
+  break;
+}
+}
+MOTOR_SetSpeed(0,0);
+MOTOR_SetSpeed(1,0);
+delay(100);
+Avancer(15, 0.3);
+delay(1000);
+flag = couleur();
+delay(100);
+Avancer(20, 0.3);
+delay(1000);
+CatchNRelease(0);
+DragNDropBall(flag);
+exit(0);
 }
