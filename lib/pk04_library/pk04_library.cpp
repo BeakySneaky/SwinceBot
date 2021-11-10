@@ -128,37 +128,6 @@ void Tourner(int angle, float vit)
     ENCODER_Reset(1);
 }
 
-/*void Tour180(void)
-{
-
-  float quartC = (3.1416/2)*roue;
-  float nb_pulse = 3200 * quartC/circonference;
-    delay(500);
-    MOTOR_SetSpeed(0, -0.15);
-    MOTOR_SetSpeed(1, 0.15);
-
-   while(nb_pulse >= -ENCODER_Read(0) && nb_pulse>= ENCODER_Read(1))
-  {
-  
-    delay(10); 
-  }
-  MOTOR_SetSpeed(0, 0);
-  MOTOR_SetSpeed(1, 0);
-
-  if(nb_pulse<=ENCODER_Read(1)){
-    MOTOR_SetSpeed(1, 0);
-    while(nb_pulse >= -ENCODER_Read(0)) ;
-    MOTOR_SetSpeed(0, 0);
-  }
-   else if(nb_pulse<=-ENCODER_Read(0)){
-    MOTOR_SetSpeed(0, 0);
-    while(nb_pulse >= ENCODER_Read(1)) ;
-    MOTOR_SetSpeed(1, 0);
-  }
-  delay(100);
-  ENCODER_Reset(0);
-  ENCODER_Reset(1);
-}*/
 
 float pid(int nb_pulse_droite, int nb_pulse_gauche, float vitesse_droite)
 {
@@ -187,7 +156,7 @@ void CatchNRelease(bool release){
   angle = 165;
 
   SERVO_SetAngle(0,angle);
-  delay(1000);
+  delay(250);
 
 }
 
@@ -214,18 +183,17 @@ digitalWrite(ledj, LOW);
   digitalWrite(LedVerte, HIGH);
   float distance = SONAR_GetRange(0);
   Tourner(90, turn);
-  delay(100);
-  SERVO_SetAngle(0,35); 
-  Avancer(distance-4, vroom); 
+  //delay(100);
+  SERVO_SetAngle(0,55); 
+  Avancer(distance-4, vroom + .2); 
   yeet();
   digitalWrite(LedVerte, LOW);
 
-  Tourner(180, turn);
   delay(100); 
   
-  Avancer(distance-4, vroom); 
+  Avancer(distance-4, vroom + .2); 
 
-    Tourner(90, turn);
+    Tourner(85, turn);
 
 }
 
@@ -234,12 +202,12 @@ void DragNDropBall(int color)//rouge
 
   if (color==1)
   {
-    Tourner(1.5, turn);
-    Avancer(50, vroom);
-    Avancer(50, vroom);
-    Avancer(50, vroom);
-    Avancer(50, vroom);
-    Avancer(11, vroom);
+    Tourner(2, turn);
+    Avancer(50, vroom + .2);
+    Avancer(50, vroom + .2);
+    Avancer(50, vroom + .2);
+    Avancer(50, vroom + .2);
+    Avancer(17, vroom + .2);
     
 
   }
@@ -248,13 +216,13 @@ void DragNDropBall(int color)//rouge
   Tourner(-90, turn);
   delay(100);
   Avancer(47, vroom);
-  Tourner(92, turn);
+  Tourner(96, turn);
   delay(100); 
     Avancer(50, vroom);
     Avancer(50, vroom);
     Avancer(50, vroom);
     Avancer(50, vroom);
-    Avancer(11, vroom);
+    Avancer(17, vroom);
    
 
 }
@@ -262,60 +230,68 @@ void DragNDropBall(int color)//rouge
 {
   Tourner(90, turn);
   delay(100); 
-  Avancer(47, vroom);
-  Tourner(-89, turn); 
+  Avancer(45, vroom);
+  Tourner(-93, turn); 
   delay(100);
     Avancer(50, vroom);
     Avancer(50, vroom);
     Avancer(50, vroom);
     Avancer(50, vroom);
-    Avancer(11, vroom);
+    Avancer(19, vroom);
  
 }
-  delay(1000);
+  delay(1500);
   CatchNRelease(1); 
 }
 
 void RetourStart(int color)
 {
-  Tourner(180, turn);
-  delay (100);
      
   if (color==1) //rouge
   // retourne vers le circuit directement
 
   {
-    Avancer(310, vroom);
+      Tourner(184.5, turn + .1);
+
+    Avancer(305, vroom + .2);
+    Tourner(-90,turn + .1);
 
   }
   if (color==2) //bleu
   // retourne vers le circuit directement(se dirige legerement vers le centre)
 
 {
-  Avancer(250, vroom);
+    Tourner(184.5, turn);
+
+  Avancer(280, vroom + .2);
   
   Tourner(-90, turn);
   
-  Avancer(30, vroom);
+  Avancer(10, vroom);
 
   Tourner(90, turn);
   
-  Avancer(60, vroom);
+  Avancer(20, vroom);
+
+  Tourner(-90,turn);
 
 }
-  if (color==3 )//jaune
+  if (color ==3 )//jaune
 // retourne vers le circuit directement(se dirige legerement vers le centre)
 {
-  
-  Avancer(250, vroom);
+    Tourner(184.5, turn);
+
+  Avancer(280, vroom + .2);
  
   Tourner(90, turn);
 
-  Avancer(30, vroom);
+  Avancer(10, vroom);
 
-  Tourner(90, turn);
+  Tourner(-90, turn);
 
-  Avancer(60, vroom);
+  Avancer(20, vroom);
+
+  Tourner(-90,turn);
 
 }
 }
@@ -332,20 +308,26 @@ while (color == 0){
     tcs.getRawData(&red, &green, &blue, &clear);
 
     tcs.setInterrupt(true);  // turn off LED
+   /* Serial.print(red);
+    Serial.print("\t");
+    Serial.print(green);
+    Serial.print("\t");
+    Serial.print(blue);
+    Serial.print("\n");*/
 
-if(650 <= red && red <= 750 && 500 <= green && green <= 700 && 650 <= blue && blue <= 750 )//rose
+if(600 <= red && red <= 750 && 500 <= green && green <= 649 && 600 <= blue && blue <= 750 )//rose
 {
 color = 1;
 }
-if(450 <= red && red <= 550 && 600 <= green && green <= 730 && 700 <= blue && blue <= 800 )//bleu
+if(400 <= red && red <= 600 && 600 <= green && green <= 850 && 700 <= blue && blue <= 900 )//bleu
 {
   color = 2;
 }
-if(700 <= red && red <= 820 && 700 <= green && green <= 830 && 580 <= blue && blue <= 700 )//jaune
+if(600 <= red && red <= 750 && 650 <= green && green <= 850 && 500 <= blue && blue <= 750 )//jaune
 {
   color = 3;
 }
-    delay(500);
+    //delay(250);
 
 }
 if(color == 1)
@@ -460,16 +442,29 @@ void suiveurDeLigne(float *vitesseG, float *vitesseD){
 void yeet()
 {
   
-  Tourner(90, .7);
-  Tourner(-90, .7);
-  Tourner(-90, .7);
-  Tourner(90, .7);
+  Tourner(90, .65);
+  Tourner(-270, .65);
+  //Tourner(90, .5);
   SERVO_SetAngle(0, 165);
-  delay(100);
+  delay(50);
 
 
 }
+int scan()
+{
+int val = 0;
+int i;
+for ( i = 0 ; i < 100 ; i++)
+{
+val = analogRead(cote) + val;
+}
+val = val / i;
+val = val + 50 ;
+delay(500);
+return val;
 
+
+}
 
 
 

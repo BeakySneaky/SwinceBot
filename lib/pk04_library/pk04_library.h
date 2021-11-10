@@ -8,7 +8,7 @@
 // -> defines...
 // L'ensemble des fonctions y ont acces
 //#define circonference 24.2496; // en cm (un tour-->3200)
-#define VITESSE 0.20
+#define VITESSE 0.30
 #define MODIF_VITESSE 0.01
 #define VITESSE_MAX 0.8
 #define ERREUR -1
@@ -24,7 +24,7 @@
 #define ledb 48 
 #define ledj 42 
 #define LedVerte 44
-#define cote 41
+#define cote A9
 #define mic A13
 #define commonAnode true
 
@@ -65,5 +65,7 @@ int capteurLigneCase(bool c, bool d, bool g);
 void reglerVitesse(int cas, float *vGauche, float *vDroite);
 
 void suiveurDeLigne(float *vitesseG, float *vitesseD);
+
+int scan();
 
 #endif
