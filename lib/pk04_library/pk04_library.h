@@ -8,7 +8,7 @@
 // -> defines...
 // L'ensemble des fonctions y ont acces
 //#define circonference 24.2496; // en cm (un tour-->3200)
-#define VITESSE 0.30
+#define VITESSE 0.3 //.3
 #define MODIF_VITESSE 0.01
 #define VITESSE_MAX 0.8
 #define ERREUR -1
@@ -67,5 +67,6 @@ void reglerVitesse(int cas, float *vGauche, float *vDroite);
 void suiveurDeLigne(float *vitesseG, float *vitesseD);
 
 int scan();
+void Avancerligne (float speed);
 
 #endif
