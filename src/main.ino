@@ -49,9 +49,11 @@ void setup(){
     pinMode(TEST2, INPUT);//Milieu
     pinMode(TEST3, INPUT);//Gauche
     pinMode(cote, INPUT);//cote
-    SERVO_SetAngle(0,165);
-
-
+    SERVO_Enable(0);
+    SERVO_SetAngle(0,75);
+  Serial2.begin(9600);
+  Serial.println("Test du ID-12 sur UART2 (RX2/Digital 17)");
+SERVO_Disable(0);
 }
 
 /* ****************************************************************************
@@ -60,62 +62,11 @@ Fonctions de boucle infini (loop())
 // -> Se fait appeler perpetuellement suite au "setup"
 
 void loop() {
-
- float vitesseG = VITESSE;
-  float vitesseD = VITESSE;
-  int flag = 0;
-  int enc = 0; 
-  int scantest = 0;
  
-scantest = scan();
-//digitalWrite(36, HIGH);
-while(sifflet() == 0 )
-{
-  suiveurDeLigne(&vitesseG, &vitesseD);
-  
-}
-
-while(Find() == 0)
-{
-suiveurDeLigne(&vitesseG, &vitesseD);
-delay(10);
-}
-MOTOR_SetSpeed(0,0);
-MOTOR_SetSpeed(1,0);
-delay(10);
-frappe();
-ENCODER_Reset(0);
-while(enc<4000)
-{
-  enc=ENCODER_Read(0);
-  suiveurDeLigne(&vitesseG, &vitesseD);
-}
-while(analogRead(cote) > scantest){
-suiveurDeLigne(&vitesseG, &vitesseD);
-}
-Tourner(-85, .3);
-Avancer(5, .25);
-while(1)
-{
-suiveurDeLigne(&vitesseG, &vitesseD);
-if ((digitalRead(TEST2) == 0) && (digitalRead(TEST1) == 0) && (digitalRead(TEST3) == 0))
-{
-  break;
-}
-}
-MOTOR_SetSpeed(0,0);
-MOTOR_SetSpeed(1,0);
-delay(100);
-Avancer(15, 0.35);
-//delay(100);
-flag = couleur();
-delay(150);
-Avancer(18, 0.3);
-CatchNRelease(0);
-DragNDropBall(flag);
-RetourStart(flag);
-Avancerligne(.4);
-Tourner(-90,.2);
-suiveurDeLigne(&vitesseG, &vitesseD);
-
+ // rfid();
+  delay(15000);
+  swince();
+  delay(2000);
+  SERVO_Disable(0);
+  exit(0);
 }

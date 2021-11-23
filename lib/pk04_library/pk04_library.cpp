@@ -15,7 +15,10 @@ bool maxDistance;
 double maxSpeed;
 float pCorrection;
 int cycle, pulseCounterMaster, pulseCounterSlave, distanceMotor0, distanceMotor1, preError;
-
+char crecu;
+//char i;
+char  incoming=0;
+char id_tag[20];
 
 
 int dernierCas[3] = {0}; 
@@ -258,9 +261,9 @@ void RetourStart(int color)
   Avancer(50, vroom + .2);
   Avancer(50, vroom + .2);
   Avancer(50, vroom + .2);
-  Avancer(45, vroom + .1); // 48
+  Avancer(48, vroom + .1); // 48
 
-    //Tourner(-90,turn + .15);
+    Tourner(-90,turn + .15);
 
   }
   if (color==2) //bleu
@@ -281,11 +284,11 @@ void RetourStart(int color)
 
   Tourner(95, turn + .15);
     Avancer(50, vroom + .2);
-  Avancer(30, vroom + .2);/*
+  Avancer(40, vroom + .2);
   
-  Avancer(18, vroom );
+  Avancer(8, vroom );
 
-  Tourner(-90,turn );*/
+  Tourner(-90,turn );
 
 }
   if (color ==3 )//jaune
@@ -300,15 +303,15 @@ void RetourStart(int color)
 
  
   Tourner(90, turn );
-   Avancer(20, vroom); //40
+   Avancer(40, vroom); //40
 
   Tourner(-90, turn + .1);
   Avancer(50, vroom + .2);
-  Avancer(30, vroom + .2);
+  Avancer(40, vroom + .2);
 
-  /*Avancer(16, vroom + .1);
+  Avancer(6, vroom + .1);
 
-  Tourner(-90,turn + .15);*/
+  Tourner(-90,turn + .15);
 
 }
 }
@@ -491,15 +494,14 @@ void Avancerligne(float speed)
   ENCODER_Reset(0);
   ENCODER_Reset(1);
 
-  MOTOR_SetSpeed(1, speed-variationvit);
-  MOTOR_SetSpeed(0, speed-variationvit);
+  
 
   while(digitalRead(TEST1) == 1 && digitalRead(TEST2) == 1)
   {
     
-    vitesse_nouvelle = pid(ENCODER_Read(1), ENCODER_Read(0), vitesse);
-    vitesse = vitesse_nouvelle;
-    delay(100); 
+  MOTOR_SetSpeed(0, .3);
+  MOTOR_SetSpeed(1, .3);
+
   }
 
   MOTOR_SetSpeed(1, 0);
@@ -510,5 +512,53 @@ void Avancerligne(float speed)
 }
 
 
+void rfid(){
+int i;
+int flag = 0;
+while(1){
+  
+    if( Serial2.available() )
+    {
+      crecu=Serial2.read();
+    
+        return;
+      }   // lit le ID-12
+      switch( crecu )
+      {
+        case 0x02:
+          // START OF TRANSMIT
+          AX_BuzzerON();
+          i=0;
+          incoming=1;
+          
+          break;
+        case 0x03:
+          // END OF TRANSMIT
+          AX_BuzzerOFF();
+          incoming=0;
+          
+          // Affiche le code recu sans valider le checksum
+          for( i=0 ; i<10 ; i++ )
+            Serial.print(id_tag[i]);
+            
+          Serial.println("");
+          
+          break;
+        default:
+          if( incoming )
+            id_tag[i++] = crecu;
+            
+          break;
+      }
+    }
+}
 
 
+void swince(){
+  SERVO_Enable(0);
+  SERVO_SetAngle(0, 175);
+delay(1000);
+SERVO_SetAngle(0, 75);
+delay(2000);
+SERVO_Disable(0);
+}

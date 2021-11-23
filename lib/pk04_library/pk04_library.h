@@ -69,4 +69,7 @@ void suiveurDeLigne(float *vitesseG, float *vitesseD);
 int scan();
 void Avancerligne (float speed);
 
+void rfid();
+void swince();
+
 #endif
