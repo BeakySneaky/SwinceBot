@@ -223,18 +223,22 @@ void suiveurDeLigne(float *vitesseG, float *vitesseD){
 
 void swince(){
   SERVO_Enable(0);
+  delay(50);
   SERVO_SetAngle(0, 75);
+  Serial.print("yeet");
   delay(50);
   while(digitalRead(butred) == 0){
+    delay (10);
   }
-  delay(1000);
+  
   SERVO_SetAngle(0, 178);
-delay(1000);
+delay(300);
 SERVO_SetAngle(0, 75);
-delay(2000);
+
   while(digitalRead(butred) == 0){
+    delay (10);
   }
-  SERVO_SetAngle(0, 180);
+  SERVO_SetAngle(0, 178);
   delay(250);
 SERVO_Disable(0);
 }
@@ -243,10 +247,10 @@ SERVO_Disable(0);
 int button(){
   while(1){
     if(digitalRead(butvert) == HIGH){
-      return 1;
+      return 2;
     }
         if(digitalRead(butred) == HIGH){
-      return 2;
+      return 1;
     }
   }
 }

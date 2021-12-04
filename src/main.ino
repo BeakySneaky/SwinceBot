@@ -56,7 +56,7 @@ void setup(){
     pinMode(FonctionAlcool, OUTPUT);
     digitalWrite(FonctionAlcool, LOW);
     SERVO_Enable(0);
-    SERVO_SetAngle(0,180);
+    SERVO_SetAngle(0,178);
     delay(200);
 //  Serial2.begin(9600);
   Serial.println("Test du ID-12 sur UART2 (RX2/Digital 17)");
@@ -70,10 +70,10 @@ void screen(int texte) {
  switch(texte) {
     case 1:
       oled.clearDisplay();
-      oled.setTextSize(2);
+      oled.setTextSize(1.5);
       oled.setTextColor(WHITE);
       oled.setCursor(0,29);
-      oled.print("Sobre");
+      oled.print("Pete toi une can");
       oled.display();
       delay(1000);
       //oled.clearDisplay();
@@ -84,7 +84,7 @@ void screen(int texte) {
       oled.setTextSize(2);
       oled.setTextColor(WHITE);
       oled.setCursor(0,29);
-      oled.print("Bu");
+      oled.print("Chaudasse");
       oled.display();
       delay(1000);
       //oled.clearDisplay();
@@ -95,7 +95,7 @@ void screen(int texte) {
       oled.setTextSize(2);
       oled.setTextColor(WHITE);
       oled.setCursor(0,29);
-      oled.print("Chaudasse");
+      oled.print("Chaud bateau");
       oled.display();
       delay(1000);
       //oled.clearDisplay();
@@ -106,7 +106,7 @@ void screen(int texte) {
       oled.setTextSize(2);
       oled.setTextColor(WHITE);
       oled.setCursor(0,29);
-      oled.print("Bateau");
+      oled.print("Pas gerable");
       oled.display();
       delay(1000);
       //oled.clearDisplay();
@@ -142,7 +142,6 @@ float vitesseG = VITESSE;
  int action = 0;
 oled.drawBitmap(0,0, bitmap_mcdo , 128 , 64 , WHITE);
 oled.display();
- 
 while(flag == 0){
   suiveurDeLigne(&vitesseG, &vitesseD);
   flag = digitalRead(pos1);
@@ -151,7 +150,7 @@ while(flag == 0){
 MOTOR_SetSpeed(0,0);
 MOTOR_SetSpeed(1,0);
 delay(100);
-
+while(action == 0){
 action = button();
 delay(100);
 if(action == 1){
@@ -161,7 +160,8 @@ if(action == 1){
 if(action == 2){
   oled.clearDisplay();
   screen(AlcooTest());
-  delay(4000);
+  delay(2000);
+}
 }
 delay(100);
 }

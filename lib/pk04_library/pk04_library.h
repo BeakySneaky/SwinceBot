@@ -24,8 +24,8 @@
 #define redpin 3
 #define greenpin 5
 #define bluepin 6
-#define butred 42
-#define butvert 44
+#define butred 44
+#define butvert 42
 
 #define pos1 46
 #define pos2 48
@@ -47,7 +47,7 @@ void Avancer(float distance_voulue, float speed);
 //Tourner
 void Tourner(int angle, float vit);
 
-
+float pid(int nb_pulse_droite, int nb_pulse_gauche, float vitesse_droite);
 
 int capteurLigneCase(bool c, bool d, bool g);
 
